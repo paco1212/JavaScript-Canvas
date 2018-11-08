@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Canvas | Francisco Gallardo</title>
+        <style>
+            canvas {
+                border:1px solid #d3d3d3;
+                background-color: #f1f1f1;
+            }
+        </style>
+
+    </head>
+
+    <body onload="startGame()">
+        <script>
+
+            var myGamePiece;
+            var keyPressed;
+            var colorC = "#ff0000";
+
+            function startGame() {
+                myGamePiece = new component(10, 10, "red", 10, 120);
+                myGameArea.start();
+            }
+
+            var myGameArea = {
+                canvas : document.createElement("canvas"),
+                start : function() {
+                    this.canvas.width = 800;
+                    this.canvas.height = 500;
+                    this.canvas.style.cursor = "none"; //hide the original cursor
+                    this.context = this.canvas.getContext("2d");
+                    document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+                    this.interval = setInterval(updateGameArea, 2);
+                    window.addEventListener('mousemove', function (e) {
+                        myGameArea.x = e.pageX;
+                        myGameArea.y = e.pageY;
+                    });
+                    window.addEventListener('keydown', function(a) {
+                        keyPressed = a.keyCode;
+                    });
+                }, 
+                clear : function(){
+                    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                }
+            };
+
+            function component(width, height, color, x, y) {
+                this.width = width;
+                this.height = height;
+                this.speedX = 0;
+                this.speedY = 0;    
+                this.x = x;
+                this.y = y;    
+                this.update = function() {
+                    ctx = myGameArea.context;
+                    ctx.fillStyle = colorC;
+                    ctx.moveTo(this.x, this.y);
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y,this.width,0,2*Math.PI);
+                    ctx.fill();
+                };
+            }
+
+            function updateGameArea() {
+                if (myGameArea.x && myGameArea.y) {
+                    myGamePiece.x = myGameArea.x;
+                    myGamePiece.y = myGameArea.y;        
+                }
+                myGamePiece.update();
+
+                switch(keyPressed) {
+                    
+                    // When user hits the spacebar key
+                    case 32: {
+                        ctx.closePath();
+                        myGameArea.clear();
+                        keyPressed=0;
+                        break;
+                    }
+                    
+                    // When user hits up arrow key
+                    case 38: {
+                        if (myGamePiece.width <= 100) {
+                            myGamePiece.width += 1;
+                            myGamePiece.height += 1;
+                        }
+                        keyPressed=0;
+                        break;
+
+                    }
+
+                    // When user hits down arrow key
+                    case 40: {
+                        if (myGamePiece.width != 1) {
+                            myGamePiece.width -=1;
+                            myGamePiece.height -=1;
+                            myGamePiece.update();
+                        }
+                        keyPressed=0;
+                        break;
+                    }
+
+                    // When user hits B key
+                    case 66: {
+                        ctx.closePath();
+                        colorC="#3370d4"; // Blue
+                        ctx.fillStyle = colorC;
+                        ctx.fill();
+                        keyPressed=0;
+                        break;
+                    }
+
+                    // When user hits G key
+                    case 71: {
+                        ctx.closePath();
+                        colorC = "#008000"; // Green
+                        ctx.fillStyle = colorC;
+                        ctx.fill();
+                        keyPressed=0;
+                        break;
+                    }
+                    
+                    // When user hits R key
+                    case 82: {
+                        colorC="#ff0000"; // Red
+                        ctx.closePath();
+                        ctx.fillStyle = colorC;
+                        ctx.fill();
+                        keyPressed=0;
+                        break;
+                    }
+
+                    // When user hits Y key 
+                    case 89: {
+                        ctx.closePath();
+                        colorC="#ffff00"; // Yellow 
+                        ctx.fillStyle = colorC;
+                        ctx.fill();
+                        keyPressed=0;
+                        break;
+                    }
+                }    
+            }
+
+        </script>
+
+        <p>Move the cursor inside the canvas to move the red square.</p>
+
+    </body>
+</html>
